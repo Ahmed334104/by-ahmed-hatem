@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مؤقت البومودورو الدراسي</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2ecc71;
+            --accent: #e74c3c;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --study-color: #e74c3c;
+            --break-color: #2ecc71;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 50px;
+            padding: 5px;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tab {
+            padding: 12px 30px;
+            cursor: pointer;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .timer-display {
+            font-size: 5rem;
+            font-weight: bold;
+            margin: 30px 0;
+            color: var(--dark);
+            text-align: center;
+            background-color: var(--light);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .session-info {
+            font-size: 1.5rem;
+            margin: 20px 0;
+            color: var(--primary);
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .controls {
+            margin: 30px 0;
+            text-align: center;
+        }
+        
+        .time-selection, .sound-selection {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        select, button, .sound-btn {
+            padding: 12px 20px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 10px;
+            margin: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        select {
+            background-color: var(--light);
+            width: 200px;
+        }
+        
+        button, .sound-btn {
+            background-color: var(--primary);
+            color: white;
+            font-weight: bold;
+            min-width: 150px;
+        }
+        
+        button:hover, .sound-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        #startBtn {
+            background-color: var(--secondary);
+        }
+        
+        #pauseBtn {
+            background-color: #f39c12;
+        }
+        
+        #resetBtn {
+            background-color: var(--accent);
+        }
+        
+        #openToneSelector {
+            background-color: #9b59b6;
+        }
+        
+        .study-tone-btn {
+            background-color: var(--study-color);
+        }
+        
+        .break-tone-btn {
+            background-color: var(--break-color);
+        }
+        
+        .sound-notification {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 15px 0;
+            text-align: center;
+            color: #856404;
+        }
+        
+        .tone-selection-section {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+        }
+        
+        .tone-selection-section h3 {
+            margin-bottom: 15px;
+            color: var(--dark);
+            text-align: center;
+        }
+        
+        .tone-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .tone-option {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tone-option:hover {
+            border-color: var(--primary);
+        }
+        
+        .tone-option.selected {
+            border-color: var(--primary);
+            background-color: #e3f2fd;
+        }
+        
+        .tone-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .tone-desc {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .file-upload {
+            margin: 15px 0;
+            text-align: center;
+        }
+        
+        .file-upload-label {
+            display: inline-block;
+            padding: 10px 15px;
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px 0;
+        }
+        
+        .file-upload-label:hover {
+            transform: translateY(-2px);
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .uploaded-file-info {
+            margin: 10px 0;
+            padding: 8px;
+            background-color: #e8f5e9;
+            border-radius: 6px;
+            border: 1px solid #c8e6c9;
+            font-size: 0.9rem;
+        }
+        
+        .current-tones-info {
+            background-color: #e3f2fd;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .tone-info-item {
+            margin: 8px 0;
+            padding: 8px;
+            background-color: white;
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .study-tone {
+            border-left-color: var(--study-color);
+        }
+        
+        .break-tone {
+            border-left-color: var(--break-color);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 15px;
+            padding: 25px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 1.4rem;
+            color: var(--dark);
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--dark);
+        }
+        
+        @media (max-width: 768px) {
+            .timer-display {
+                font-size: 3.5rem;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab {
+                width: 100%;
+            }
+            
+            .tone-options {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>مؤقت البومودورو الدراسي</h1>
+            <p>ادارة الوقت الدراسي بكفاءة مع نظام البومودورو</p>
+        </header>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="timer">المؤقت</div>
+            <div class="tab" data-tab="schedule">الجدول الدراسي</div>
+        </div>
+        
+        <div id="timer" class="tab-content active">
+            <div class="sound-notification">
+                <strong>ملاحظة:</strong> قد تحتاج إلى النقر على أي مكان في الصفحة لتفعيل الأصوات لأول مرة.
+            </div>
+            
+            <div class="timer-display" id="display">25:00</div>
+            <div class="session-info" id="sessionInfo">جلسة دراسة</div>
+            
+            <div class="time-selection">
+                <label for="hours">اختر مدة الدراسة (ساعات):</label>
+                <select id="hours">
+                    <option value="1">1 ساعة</option>
+                    <option value="2" selected>2 ساعات</option>
+                    <option value="3">3 ساعات</option>
+                    <option value="4">4 ساعات</option>
+                    <option value="5">5 ساعات</option>
+                </select>
+            </div>
+            
+            <div class="current-tones-info">
+                <h3>النغمات الحالية:</h3>
+                <div class="tone-info-item study-tone">
+                    <strong>نغمة انتهاء الدراسة:</strong> <span id="currentStudyTone">جرس</span>
+                </div>
+                <div class="tone-info-item break-tone">
+                    <strong>نغمة انتهاء الراحة:</strong> <span id="currentBreakTone">نغمة موسيقية</span>
+                </div>
+            </div>
+            
+            <div class="sound-selection">
+                <button id="openToneSelector">⚙️ تعديل النغمات</button>
+            </div>
+            
+            <div class="controls">
+                <button id="startBtn">ابدأ</button>
+                <button id="pauseBtn">إيقاف مؤقت</button>
+                <button id="resetBtn">إعادة تعيين</button>
+                <button id="testStudyTone" class="study-tone-btn">🔔 اختبار نغمة الدراسة</button>
+                <button id="testBreakTone" class="break-tone-btn">🎵 اختبار نغمة الراحة</button>
+            </div>
+        </div>
+        
+        <div id="schedule" class="tab-content">
+            <div class="schedule-controls">
+                <div class="schedule-input">
+                    <input type="text" id="taskInput" placeholder="أدخل المادة أو المهمة الدراسية">
+                    <input type="number" id="taskDuration" placeholder="المدة بالدقائق" min="1">
+                    <button id="addTaskBtn">إضافة</button>
+                </div>
+            </div>
+            
+            <div class="schedule-list" id="scheduleList">
+                <div class="empty-schedule">لا توجد مهام في جدولك الدراسي بعد. أضف مهامك الأولى!</div>
+            </div>
+            
+            <div class="pomodoro-estimate">
+                <h3>تقسيم البومودورو المقترح:</h3>
+                <div id="pomodoroEstimation"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة اختيار النغمات -->
+    <div id="toneModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">🎵 تعديل النغمات</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            
+            <!-- نغمة انتهاء الدراسة -->
+            <div class="tone-selection-section">
+                <h3>🔔 نغمة انتهاء الدراسة (25 دقيقة)</h3>
+                <div class="tone-options">
+                    <div class="tone-option selected" data-type="study" data-tone="bell">
+                        <div class="tone-name">جرس</div>
+                        <div class="tone-desc">نغمة جرس تقليدية</div>
+                    </div>
+                    <div class="tone-option" data-type="study" data-tone="alarm">
+                        <div class="tone-name">منبه</div>
+                        <div class="tone-desc">نغمة تنبيه قوية</div>
+                    </div>
+                    <div class="tone-option" data-type="study" data-tone="beep">
+                        <div class="tone-name">نغمة رقمية</div>
+                        <div class="tone-desc">بيبات رقمية</div>
+                    </div>
+                    <div class="tone-option" data-type="study" data-tone="chime">
+                        <div class="tone-name">نغمة ناعمة</div>
+                        <div class="tone-desc">نغمة هادئة</div>
+                    </div>
+                </div>
+                <div class="file-upload">
+                    <label for="studyAudioUpload" class="file-upload-label">
+                        📁 رفع نغمة مخصصة للدراسة
+                    </label>
+                    <input type="file" id="studyAudioUpload" class="file-input" accept="audio/*">
+                    <div id="studyUploadedInfo" class="uploaded-file-info" style="display: none;">
+                        <strong>الملف:</strong> <span id="studyFileName"></span>
+                        <button class="sound-btn study-tone-btn" onclick="previewTone('study', 'uploaded')" style="margin-top: 5px;">استمع</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- نغمة انتهاء الراحة -->
+            <div class="tone-selection-section">
+                <h3>🎵 نغمة انتهاء الراحة (5 دقائق)</h3>
+                <div class="tone-options">
+                    <div class="tone-option selected" data-type="break" data-tone="chime">
+                        <div class="tone-name">نغمة موسيقية</div>
+                        <div class="tone-desc">نغمة مرحة للراحة</div>
+                    </div>
+                    <div class="tone-option" data-type="break" data-tone="bell">
+                        <div class="tone-name">جرس ناعم</div>
+                        <div class="tone-desc">جرس هادئ</div>
+                    </div>
+                    <div class="tone-option" data-type="break" data-tone="notification">
+                        <div class="tone-name">إشعار</div>
+                        <div class="tone-desc">نغمة إشعار لطيفة</div>
+                    </div>
+                    <div class="tone-option" data-type="break" data-tone="beep">
+                        <div class="tone-name">نغمة بسيطة</div>
+                        <div class="tone-desc">بيبات خفيفة</div>
+                    </div>
+                </div>
+                <div class="file-upload">
+                    <label for="breakAudioUpload" class="file-upload-label">
+                        📁 رفع نغمة مخصصة للراحة
+                    </label>
+                    <input type="file" id="breakAudioUpload" class="file-input" accept="audio/*">
+                    <div id="breakUploadedInfo" class="uploaded-file-info" style="display: none;">
+                        <strong>الملف:</strong> <span id="breakFileName"></span>
+                        <button class="sound-btn break-tone-btn" onclick="previewTone('break', 'uploaded')" style="margin-top: 5px;">استمع</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button id="saveTonesBtn" class="sound-btn">💾 حفظ النغمات</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- عناصر صوتية مخفية -->
+    <audio id="studyUploadedAudio" style="display: none;"></audio>
+    <audio id="breakUploadedAudio" style="display: none;"></audio>
+
+    <script>
+        // عناصر DOM
+        const display = document.getElementById('display');
+        const sessionInfo = document.getElementById('sessionInfo');
+        const hoursSelect = document.getElementById('hours');
+        const startBtn = document.getElementById('startBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const testStudyTone = document.getElementById('testStudyTone');
+        const testBreakTone = document.getElementById('testBreakTone');
+        const openToneSelector = document.getElementById('openToneSelector');
+        const currentStudyTone = document.getElementById('currentStudyTone');
+        const currentBreakTone = document.getElementById('currentBreakTone');
+        
+        // عناصر النغمات
+        const toneModal = document.getElementById('toneModal');
+        const closeModal = document.querySelector('.close-modal');
+        const saveTonesBtn = document.getElementById('saveTonesBtn');
+        
+        // متغيرات المؤقت
+        let timer;
+        let isRunning = false;
+        let isStudySession = true;
+        let totalSeconds = 25 * 60;
+        let totalStudyTime = 2 * 60 * 60;
+        let sessionsCompleted = 0;
+        let audioContext;
+        let isAudioEnabled = false;
+        
+        // إعدادات النغمات
+        let studyTone = 'bell';
+        let breakTone = 'chime';
+        let studyUploadedFile = null;
+        let breakUploadedFile = null;
+
+        // تهيئة الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTonePreferences();
+            document.body.addEventListener('click', enableAudio, { once: true });
+            
+            // أحداث المؤقت
+            startBtn.addEventListener('click', startTimer);
+            pauseBtn.addEventListener('click', pauseTimer);
+            resetBtn.addEventListener('click', resetTimer);
+            testStudyTone.addEventListener('click', () => playTone('study'));
+            testBreakTone.addEventListener('click', () => playTone('break'));
+            
+            // أحداث النغمات
+            openToneSelector.addEventListener('click', openToneModal);
+            closeModal.addEventListener('click', closeToneModal);
+            saveTonesBtn.addEventListener('click', saveTonePreferences);
+            
+            // أحداث اختيار النغمات
+            document.querySelectorAll('.tone-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const type = this.getAttribute('data-type');
+                    const tone = this.getAttribute('data-tone');
+                    selectToneOption(type, tone);
+                });
+            });
+            
+            // أحداث رفع الملفات
+            document.getElementById('studyAudioUpload').addEventListener('change', (e) => handleFileUpload(e, 'study'));
+            document.getElementById('breakAudioUpload').addEventListener('change', (e) => handleFileUpload(e, 'break'));
+            
+            loadTasks();
+        });
+
+        // تفعيل الصوت
+        function enableAudio() {
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                isAudioEnabled = true;
+            } catch (e) {
+                console.error("خطأ في تفعيل الصوت:", e);
+            }
+        }
+
+        // تشغيل النغمة
+        function playTone(type) {
+            if (!isAudioEnabled) {
+                alert("يرجى النقر على أي مكان في الصفحة لتفعيل الصوت أولاً");
+                return;
+            }
+
+            const tone = type === 'study' ? studyTone : breakTone;
+            const uploadedFile = type === 'study' ? studyUploadedFile : breakUploadedFile;
+            const audioElement = type === 'study' ? document.getElementById('studyUploadedAudio') : document.getElementById('breakUploadedAudio');
+
+            if (tone === 'uploaded' && uploadedFile) {
+                // تشغيل الملف المرفوع
+                audioElement.play().catch(e => {
+                    console.error('خطأ في تشغيل الملف:', e);
+                    playBuiltInTone(type, 'bell'); // استخدام نغمة افتراضية في حالة الخطأ
+                });
+            } else {
+                // تشغيل النغمة المدمجة
+                playBuiltInTone(type, tone);
+            }
+        }
+
+        // تشغيل النغمة المدمجة
+        function playBuiltInTone(type, tone) {
+            if (!audioContext) return;
+
+            try {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+
+                let frequencies = [];
+                let duration = 0.6;
+
+                if (type === 'study') {
+                    // نغمات الدراسة (أكثر جدية)
+                    switch(tone) {
+                        case 'bell':
+                            frequencies = [784, 1047, 784]; // جرس
+                            duration = 1.0;
+                            break;
+                        case 'alarm':
+                            frequencies = [800, 600, 800, 600]; // منبه
+                            duration = 0.8;
+                            break;
+                        case 'beep':
+                            frequencies = [1000, 1000, 1000]; // بيبات
+                            duration = 0.4;
+                            break;
+                        case 'chime':
+                            frequencies = [523, 659, 784]; // نغمة ناعمة
+                            duration = 0.8;
+                            break;
+                        default:
+                            frequencies = [784, 1047, 784];
+                    }
+                } else {
+                    // نغمات الراحة (أكثر استرخاء)
+                    switch(tone) {
+                        case 'chime':
+                            frequencies = [523, 659, 784, 1047]; // موسيقية
+                            duration = 1.0;
+                            break;
+                        case 'bell':
+                            frequencies = [659, 784, 880]; // جرس ناعم
+                            duration = 0.8;
+                            break;
+                        case 'notification':
+                            frequencies = [600, 800, 600]; // إشعار
+                            duration = 0.5;
+                            break;
+                        case 'beep':
+                            frequencies = [800, 1000, 800]; // بيبات خفيفة
+                            duration = 0.4;
+                            break;
+                        default:
+                            frequencies = [523, 659, 784, 1047];
+                    }
+                }
+
+                const now = audioContext.currentTime;
+                frequencies.forEach((freq, index) => {
+                    oscillator.frequency.setValueAtTime(freq, now + (index * duration/3));
+                });
+
+                gainNode.gain.setValueAtTime(0.3, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + duration);
+
+                oscillator.start(now);
+                oscillator.stop(now + duration);
+
+            } catch (e) {
+                console.error("خطأ في تشغيل النغمة:", e);
+            }
+        }
+
+        // معاينة النغمة
+        function previewTone(type, tone) {
+            if (tone === 'uploaded') {
+                const audioElement = type === 'study' ? document.getElementById('studyUploadedAudio') : document.getElementById('breakUploadedAudio');
+                audioElement.play().catch(e => {
+                    alert('⚠️ تعذر تشغيل الملف الصوتي');
+                });
+            } else {
+                playBuiltInTone(type, tone);
+            }
+        }
+
+        // اختيار نغمة
+        function selectToneOption(type, tone) {
+            // إلغاء تحديد جميع النغمات من هذا النوع
+            document.querySelectorAll(`.tone-option[data-type="${type}"]`).forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // تحديد النغمة المختارة
+            event.target.closest('.tone-option').classList.add('selected');
+            
+            if (type === 'study') {
+                studyTone = tone;
+            } else {
+                breakTone = tone;
+            }
+        }
+
+        // رفع ملف صوتي
+        function handleFileUpload(event, type) {
+            const file = event.target.files[0];
+            if (file) {
+                if (!file.type.startsWith('audio/')) {
+                    alert('⚠️ يرجى اختيار ملف صوتي صحيح');
+                    return;
+                }
+
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('⚠️ حجم الملف كبير جداً. يرجى اختيار ملف أصغر من 5MB');
+                    return;
+                }
+
+                const objectURL = URL.createObjectURL(file);
+                const audioElement = type === 'study' ? document.getElementById('studyUploadedAudio') : document.getElementById('breakUploadedAudio');
+                const infoDiv = type === 'study' ? document.getElementById('studyUploadedInfo') : document.getElementById('breakUploadedInfo');
+                const fileNameSpan = type === 'study' ? document.getElementById('studyFileName') : document.getElementById('breakFileName');
+
+                audioElement.src = objectURL;
+                fileNameSpan.textContent = file.name;
+                infoDiv.style.display = 'block';
+
+                if (type === 'study') {
+                    studyUploadedFile = file;
+                    studyTone = 'uploaded';
+                    selectToneOption('study', 'uploaded');
+                } else {
+                    breakUploadedFile = file;
+                    breakTone = 'uploaded';
+                    selectToneOption('break', 'uploaded');
+                }
+            }
+        }
+
+        // حفظ التفضيلات
+        function saveTonePreferences() {
+            const toneNames = {
+                'bell': 'جرس',
+                'alarm': 'منبه', 
+                'beep': 'نغمة رقمية',
+                'chime': 'نغمة ناعمة',
+                'notification': 'إشعار',
+                'uploaded': 'مخصصة'
+            };
+
+            currentStudyTone.textContent = toneNames[studyTone] || 'جرس';
+            currentBreakTone.textContent = toneNames[breakTone] || 'نغمة موسيقية';
+
+            localStorage.setItem('studyTone', studyTone);
+            localStorage.setItem('breakTone', breakTone);
+
+            closeToneModal();
+        }
+
+        // تحميل التفضيلات
+        function loadTonePreferences() {
+            const savedStudyTone = localStorage.getItem('studyTone');
+            const savedBreakTone = localStorage.getItem('breakTone');
+
+            if (savedStudyTone) studyTone = savedStudyTone;
+            if (savedBreakTone) breakTone = savedBreakTone;
+
+            const toneNames = {
+                'bell': 'جرس',
+                'alarm': 'منبه',
+                'beep': 'نغمة رقمية', 
+                'chime': 'نغمة ناعمة',
+                'notification': 'إشعار',
+                'uploaded': 'مخصصة'
+            };
+
+            currentStudyTone.textContent = toneNames[studyTone] || 'جرس';
+            currentBreakTone.textContent = toneNames[breakTone] || 'نغمة موسيقية';
+        }
+
+        // وظائف المؤقت
+        function startTimer() {
+            if (!isRunning) {
+                isRunning = true;
+                timer = setInterval(updateTimer, 1000);
+                startBtn.textContent = 'استئناف';
+            }
+        }
+
+        function pauseTimer() {
+            if (isRunning) {
+                isRunning = false;
+                clearInterval(timer);
+                startBtn.textContent = 'استئناف';
+            }
+        }
+
+        function resetTimer() {
+            isRunning = false;
+            clearInterval(timer);
+            isStudySession = true;
+            totalSeconds = 25 * 60;
+            sessionsCompleted = 0;
+            updateDisplay();
+            sessionInfo.textContent = 'جلسة دراسة';
+            startBtn.textContent = 'ابدأ';
+        }
+
+        function updateTimer() {
+            if (totalSeconds > 0) {
+                totalSeconds--;
+                updateDisplay();
+            } else {
+                if (isStudySession) {
+                    playTone('study');
+                    isStudySession = false;
+                    totalSeconds = 5 * 60;
+                    sessionInfo.textContent = 'وقت راحة';
+                    sessionsCompleted++;
+                } else {
+                    playTone('break');
+                    isStudySession = true;
+                    totalSeconds = 25 * 60;
+                    sessionInfo.textContent = 'جلسة دراسة';
+                }
+                updateDisplay();
+            }
+        }
+
+        function updateDisplay() {
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            display.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // وظائف النافذة
+        function openToneModal() {
+            toneModal.style.display = 'flex';
+        }
+
+        function closeToneModal() {
+            toneModal.style.display = 'none';
+        }
+
+        // وظائف الجدول (مبسطة)
+        function addTask() {
+            const taskInput = document.getElementById('taskInput');
+            const taskDuration = document.getElementById('taskDuration');
+            const taskName = taskInput.value.trim();
+            const duration = parseInt(taskDuration.value);
+            
+            if (taskName && duration > 0) {
+                alert(`تم إضافة المهمة: ${taskName} لمدة ${duration} دقيقة`);
+                taskInput.value = '';
+                taskDuration.value = '';
+            } else {
+                alert('يرجى إدخال اسم المهمة ومدة صحيحة');
+            }
+        }
+
+        function loadTasks() {
+            // يمكن إضافة تحميل المهام من localStorage هنا
+        }
+
+        // أحداث التبويب
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.getAttribute('data-tab');
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        document.getElementById('addTaskBtn').addEventListener('click', addTask);
+    </script>
+</body>
+</html>
